@@ -1,4 +1,6 @@
-// scripts/patch-monochrome-icon.cjs
+// [IMPORTANT]
+// This script was generated using AI.
+
 const fs = require("fs");
 const path = require("path");
 const sharp = require("sharp");
@@ -6,7 +8,7 @@ const sharp = require("sharp");
 const ANDROID_RES = path.join(__dirname, "..", "android", "app", "src", "main", "res");
 const SOURCE_ICON = path.join(__dirname, "..", "assets", "icon-monochrome.png");
 
-// Tailles standard des icônes adaptatives Android (108dp de base)
+// Standard icon sizes for android
 const DENSITIES = {
     "mipmap-mdpi": 108,
     "mipmap-hdpi": 162,

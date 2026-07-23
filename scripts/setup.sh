@@ -28,6 +28,34 @@ pnpm install || {
     exit 1
 }
 
+echo "[2.1/4] Creating MainActivity.java..."
+mkdir -p ".\android\app\src\main\java\fr\goralys\app"
+cat > ./android/app/src/main/java/fr/goralys/app/MainActivity.java << 'EOF'
+echo package fr.goralys.app;
+echo
+echo import android.os.Build;
+echo import android.os.Bundle;
+echo import android.view.View;
+echo
+echo import com.getcapacitor.BridgeActivity;
+echo
+echo public class MainActivity extends BridgeActivity {
+echo     @Override
+echo     protected void onCreate(Bundle savedInstanceState) {
+echo         super.onCreate(savedInstanceState);
+echo
+echo         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+echo             getBridge()
+echo                     .getWebView()
+echo                     .setImportantForAutofill(
+echo                             View.IMPORTANT_FOR_AUTOFILL_YES
+echo                     );
+echo         }
+echo     }
+echo }
+EOF
+echo "[OK] MainActivity.java created."
+
 echo "[OK] Successfully installed dependencies."
 echo
 
