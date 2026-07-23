@@ -1,26 +1,46 @@
 {
-  "name": "goralys-cap",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.2.10",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.10",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "name": "goralys-cap",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "eslint app",
+        "assets:generate": "capacitor-assets generate && node scripts/patch-monochrome-icon.cjs"
+    },
+    "pnpm": {
+        "overrides": {
+            "sharp": "0.35.3"
+        }
+    },
+    "dependencies": {
+        "@capacitor/android": "^8.4.2",
+        "@capacitor/assets": "^3.0.5",
+        "@capacitor/core": "^8.4.2",
+        "@capacitor/preferences": "^8.0.1",
+        "@goralys/core": "^1.4.3",
+        "@heroicons/react": "^2.2.0",
+        "@sidekickicons/react": "^0.15.0",
+        "clsx": "^2.1.1",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.6",
+        "next": "16.2.10",
+        "react": "19.2.4",
+        "react-dom": "19.2.4",
+        "universal-cookie": "^8.1.2"
+    },
+    "devDependencies": {
+        "@capacitor/cli": "^8.4.2",
+        "@tailwindcss/postcss": "^4",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "eslint": "^9",
+        "eslint-config-next": "16.2.10",
+        "prettier": "^3.9.5",
+        "sharp": "^0.35.3",
+        "tailwindcss": "^4",
+        "typescript": "^6"
+    }
 }
