@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+pause() {
+ read -s -n 1 -p "Press any key to continue . . ."
+ echo ""
+}
+
 show_banner() {
     cat "scripts/banner.txt"
     echo
@@ -13,77 +18,66 @@ echo "=================================================="
 echo "=====             Goralys setup              ====="
 echo "=================================================="
 
-echo "[1/4] Checking for pnpm..."
+echo "[1/5] Checking for pnpm and npx..."
 if ! command -v pnpm >/dev/null 2>&1; then
     echo "[ERROR] Fatal: pnpm not found in PATH."
     echo ">> Please install pnpm or add it to your system PATH."
+    pause
     exit 1
 fi
 
-echo "[OK] pnpm found."
+if ! command -v npx >/dev/null 2>&1; then
+    echo "[ERROR] Fatal: npx not found in PATH."
+    echo ">> Please install npx or add it to your system PATH."
+    pause
+    exit 1
+fi
 
-echo "[2/4] Installing dependencies ..."
+echo "[OK] pnpm and npx found."
+
+echo "[2/5] Installing dependencies ..."
 pnpm install || {
     echo "[ERROR] pnpm install failed."
+    pause
     exit 1
 }
-
-echo "[2.1/4] Creating MainActivity.java..."
-mkdir -p ".\android\app\src\main\java\fr\goralys\app"
-cat > ./android/app/src/main/java/fr/goralys/app/MainActivity.java << 'EOF'
-echo package fr.goralys.app;
-echo
-echo import android.os.Build;
-echo import android.os.Bundle;
-echo import android.view.View;
-echo
-echo import com.getcapacitor.BridgeActivity;
-echo
-echo public class MainActivity extends BridgeActivity {
-echo     @Override
-echo     protected void onCreate(Bundle savedInstanceState) {
-echo         super.onCreate(savedInstanceState);
-echo
-echo         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-echo             getBridge()
-echo                     .getWebView()
-echo                     .setImportantForAutofill(
-echo                             View.IMPORTANT_FOR_AUTOFILL_YES
-echo                     );
-echo         }
-echo     }
-echo }
-EOF
-echo "[OK] MainActivity.java created."
 
 echo "[OK] Successfully installed dependencies."
 echo
 
-echo "[3/4] Creating .env.local file ..."
+echo "[3/5] Creating Android project..."
+
+npx cap add android || {
+    echo "[ERROR] Android project creation failed."
+    pause
+    exit 1
+}
+
+cp "./templates/MainActivity.java" "./android/app/src/main/java/fr/goralys/app/MainActivity.java"
+
+echo "[OK] Android project created."
+
+echo "[4/5] Creating .env.local file ..."
 
 if [ -f "./.env.local" ]; then
     echo "An existing .env.local file was found, do you want to overwrite it ?"
     read -r -p "Overwrite ? (Y/n) : " OVERWRITE
-    if [[ "${OVERWRITE:-Y}" != "Y" ]]; then
+    if [[ ! "${OVERWRITE:-Y}" =~ ^[Yy]$ ]]; then
         echo "Keeping existing .env.local"
         goto_after_env=true
     fi
 fi
 
 if [ "${goto_after_env:-false}" != "true" ]; then
-cat > ./.env.local << 'EOF'
-NEXT_PUBLIC_API_DOMAIN="your api domain"
-NEXT_PUBLIC_API_TOKEN="veryrand0mbytes"
-EOF
-
+    cp "./templates/.env.local" "./.env.local"
     echo ".env.local ready."
     echo
 fi
 
-echo "[4/4] Running checks"
+echo "[5/5] Running checks"
 
 read -r -p "Would you like the setup to run checks (eslint)? (Y/n) : " RUN_CHECKS
-if [[ "${RUN_CHECKS:-Y}" != "Y" ]]; then
+if [[ ! "${RUN_CHECKS:-Y}" =~ ^[Yy]$ ]]; then
     goto_done=true
 fi
 
@@ -94,6 +88,7 @@ if [ "${goto_done:-false}" != "true" ]; then
     pnpm run lint || {
         echo "[ERROR] ESLint failed."
         echo "Fix issues and re-run setup or run: pnpm run lint"
+        pause
         exit 1
     }
 fi
@@ -103,3 +98,4 @@ echo "=================================================="
 echo "=====             Setup Complete             ====="
 echo "=================================================="
 echo "You can now edit your .env.local file and start coding."
+pause
