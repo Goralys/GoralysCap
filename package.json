@@ -20,7 +20,7 @@
         "@capacitor/core": "^8.4.2",
         "@capacitor/ios": "^8.4.2",
         "@capacitor/preferences": "^8.0.1",
-        "@goralys/core": "^1.4.3",
+        "@goralys/core": "^1.4.4",
         "@heroicons/react": "^2.2.0",
         "@sidekickicons/react": "^0.15.0",
         "clsx": "^2.1.1",

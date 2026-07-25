@@ -7,6 +7,7 @@ import {
     cookiesGet,
     EMAIL_KEY,
     emitUserEvent,
+    emptyUserCacheClient,
     fetchCsrfClient,
     FULL_NAME_KEY,
     goralysFetchClient,
@@ -21,6 +22,7 @@ import { useEmailModal } from "@/app/src/ui/modals/email/email-modal-provider";
 import { Preferences } from "@capacitor/preferences";
 import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
+import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
 
 export default function MePageClient(): ReactElement {
     const { showToast } = useToast();
@@ -53,9 +55,16 @@ export default function MePageClient(): ReactElement {
         });
         if (!result) return;
 
-        await logout();
-        await Preferences.remove({ key: "school-token" });
-        navigateTo("/");
+        try {
+            emptyUserCacheClient();
+            const payload = { "csrf-token": await fetchCsrfClient("logout") };
+            await goralysFetchClient("POST", "user/logout", payload);
+            await Preferences.remove({ key: SCHOOL_TOKEN_KEY });
+        } catch (err) {
+            console.error("[UserListener] Failed to clear user cache:", err);
+        } finally {
+            navigateTo("/");
+        }
     };
 
     const changeEmail = async (): Promise<void> => {

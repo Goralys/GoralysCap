@@ -6,10 +6,33 @@ import { Preferences } from "@capacitor/preferences";
 import { setSchoolToken } from "@/app/src/lib/auth/school-token";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { cookiesGet, ROLE_KEY, USER_ROLES, UserRole } from "@goralys/core";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useToast } from "@/app/src/ui/toast/toast-provider";
+import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
 
 export default function HomePageClient(): ReactElement {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { showToast } = useToast();
+
+    useEffect(() => {
+        const reason = searchParams.get("reason");
+        console.log(reason);
+        if (!reason) return;
+
+        if (reason === "no-school") {
+            showToast({
+                type: "info",
+                title: "Sélection de l'établissement",
+                message: "Veuillez sélectionner un établissement afin de commencer à utiliser l'application",
+            });
+        }
+    }, [searchParams, router, showToast]);
+
     const initSchool = useCallback(async () => {
-        const token = await Preferences.get({ key: "school-token" });
+        const token = await Preferences.get({ key: SCHOOL_TOKEN_KEY });
+
+        console.log(token.value);
 
         if (token.value === null) return;
         await setSchoolToken(token.value);

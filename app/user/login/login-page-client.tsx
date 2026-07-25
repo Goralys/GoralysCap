@@ -41,7 +41,7 @@ export default function LoginPageClient(): ReactElement {
         }
 
         navigateTo("/user/login");
-    }, [searchParams, router, showToast]); // The toast dependency is ignored to avoid render loop.
+    }, [searchParams, router, showToast]);
 
     return (
         <div className="flex grow content-center justify-center items-center min-h-screen">
