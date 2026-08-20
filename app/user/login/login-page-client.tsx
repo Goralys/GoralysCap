@@ -8,6 +8,7 @@ import { ReactElement, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
+import { loginToken } from "@/app/src/lib/auth/auth-token";
 
 export default function LoginPageClient(): ReactElement {
     const searchParams = useSearchParams();
@@ -42,6 +43,16 @@ export default function LoginPageClient(): ReactElement {
 
         navigateTo("/user/login");
     }, [searchParams, router, showToast]);
+
+    useEffect(() => {
+        try {
+            (async (): Promise<void> => {
+                await loginToken(showToast);
+            })();
+        } catch (e) {
+            console.error(e);
+        }
+    }, []);
 
     return (
         <div className="flex grow content-center justify-center items-center min-h-screen">
