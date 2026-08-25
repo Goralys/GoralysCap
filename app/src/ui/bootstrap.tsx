@@ -3,8 +3,11 @@
 import { configGoralysCore, CookiesAdapter, cookiesGet, USERNAME_KEY } from "@goralys/core";
 import Cookies from "universal-cookie";
 import { getSchoolToken } from "@/app/src/lib/auth/school-token";
+import { useToast } from "@/app/src/ui/toast/toast-provider";
 
 export default function Bootstrap(): null {
+    const { showToast } = useToast();
+
     configGoralysCore({
         client: {
             apiDomain: process.env.NEXT_PUBLIC_API_DOMAIN ?? "",
@@ -32,6 +35,9 @@ export default function Bootstrap(): null {
             };
         })(),
         auth: () => !!cookiesGet(USERNAME_KEY),
+        toast: {
+            getShowToast: () => showToast,
+        },
     });
 
     return null;

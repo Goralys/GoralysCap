@@ -1,7 +1,17 @@
 import { Device } from "@capacitor/device";
 import { SecureStorage, StorageError } from "@aparajita/capacitor-secure-storage";
 import { AUTH_TOKEN_KEY, AUTH_USERNAME_KEY } from "@/app/src/lib/config";
-import { cookiesGet, fetchCsrfClient, goralysFetchClient, handleToastRequest, ToastFn, USERNAME_KEY } from "@goralys/core";
+import {
+    cacheUserDataClient,
+    cookiesGet,
+    emitUserEvent,
+    fetchCsrfClient,
+    goralysFetchClient,
+    handleToastRequest,
+    ToastFn,
+    USERNAME_KEY,
+} from "@goralys/core";
+import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 
 async function removeToken(): Promise<void> {
     await SecureStorage.remove(AUTH_TOKEN_KEY);
@@ -22,7 +32,7 @@ async function getToken(): Promise<string | null> {
     }
 }
 
-async function getUserName(): Promise<string | null> {
+export async function getUserName(): Promise<string | null> {
     try {
         const u = await SecureStorage.get(AUTH_USERNAME_KEY);
         return typeof u === "string" ? u : null;
@@ -54,18 +64,27 @@ export async function createAuthToken(showToast: ToastFn): Promise<void> {
         return;
     }
 
-    const res = await goralysFetchClient("POST", "user/token/create", {
-        name: deviceName,
-        "csrf-token": await fetchCsrfClient("create-auth-token"),
-    });
+    const res = await goralysFetchClient(
+        "POST",
+        "user/token/create",
+        {
+            name: deviceName,
+            "csrf-token": await fetchCsrfClient("create-auth-token"),
+        },
+        { suppressRedirect: true },
+    );
 
-    await handleToastRequest(res, showToast);
+    await handleToastRequest(res, showToast, false);
     const data = await res.json();
     const u = cookiesGet(USERNAME_KEY);
     console.log(u);
     if (res.ok && data?.token && typeof data?.token === "string" && typeof u === "string") {
         await saveToken(data.token, u);
     }
+}
+
+export async function hasToken(): Promise<boolean> {
+    return !!(await getToken()) && !!(await getUserName());
 }
 
 export async function loginToken(showToast: ToastFn): Promise<void> {
@@ -84,16 +103,32 @@ export async function loginToken(showToast: ToastFn): Promise<void> {
         throw new Error("No username provided");
     }
 
-    const res = await goralysFetchClient("POST", "user/token/login", {
-        username,
-        token: token,
-        "csrf-token": await fetchCsrfClient("login-auth-token"),
-    });
+    const res = await goralysFetchClient(
+        "POST",
+        "user/token/login",
+        {
+            username,
+            token: token,
+            "csrf-token": await fetchCsrfClient("login-auth-token"),
+        },
+        { suppressRedirect: true },
+    );
 
-    await handleToastRequest(res, showToast);
+    await handleToastRequest(res, showToast, false);
 
     const data = await res.json();
+
+    if (!res.ok) {
+        await removeToken();
+    }
+
     if (data?.token) {
         await saveToken(data.token, username);
+        await cacheUserDataClient();
+        emitUserEvent("login");
+    }
+
+    if (data?.redirect) {
+        navigateTo(data.redirect);
     }
 }

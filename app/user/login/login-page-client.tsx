@@ -8,11 +8,13 @@ import { ReactElement, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
-import { loginToken } from "@/app/src/lib/auth/auth-token";
+import { getUserName, hasToken, loginToken } from "@/app/src/lib/auth/auth-token";
+import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
 
 export default function LoginPageClient(): ReactElement {
     const searchParams = useSearchParams();
     const { showToast } = useToast();
+    const confirm = useConfirm();
     const router = useRouter();
 
     useEffect(() => {
@@ -47,12 +49,23 @@ export default function LoginPageClient(): ReactElement {
     useEffect(() => {
         try {
             (async (): Promise<void> => {
+                if (await hasToken()) {
+                    if (
+                        !(await confirm.showConfirm({
+                            title: "Connexion",
+                            message: "Voulez-vous vous connectez à l'aide du compte sauvegarder (" + (await getUserName()) + ") ?",
+                        }))
+                    ) {
+                        return;
+                    }
+                }
+
                 await loginToken(showToast);
             })();
         } catch (e) {
             console.error(e);
         }
-    }, []);
+    }, [confirm, showToast]);
 
     return (
         <div className="flex grow content-center justify-center items-center min-h-screen">
