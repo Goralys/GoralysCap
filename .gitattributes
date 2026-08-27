@@ -1,3 +1,27 @@
-*.tsx LF
-*.ts LF
-*.mjs LF
+# Default: normalize everything git considers text, checkout as LF
+* text=auto eol=lf
+
+# Explicit source files (redundant with text=auto but explicit is nice for clarity/CI)
+*.ts   text eol=lf
+*.tsx  text eol=lf
+*.mjs  text eol=lf
+*.php  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.sql  text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+
+# Windows-specific scripts that genuinely need CRLF
+*.bat  text eol=crlf
+*.ps1  text eol=crlf
+
+# Binary — never touch
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.ico  binary
+*.woff binary
+*.woff2 binary
+*.pdf  binary
+*.zip  binary
