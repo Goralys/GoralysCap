@@ -17,12 +17,20 @@ import {
 import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { Card } from "@/app/src/ui/card";
 import { FloatingInput } from "@/app/src/ui/inputs/floating-input";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useEmailModal } from "@/app/src/ui/modals/email/email-modal-provider";
 import { Preferences } from "@capacitor/preferences";
 import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
+import {
+    getDefaultAccount,
+    getUserName,
+    hasToken as token,
+    removeToken,
+    removeTokenServer,
+    setDefaultAccount,
+} from "@/app/src/lib/auth/auth-token";
 
 export default function MePageClient(): ReactElement {
     const { showToast } = useToast();
@@ -32,13 +40,50 @@ export default function MePageClient(): ReactElement {
     const [email, setEmail] = useState<string>((cookiesGet(EMAIL_KEY) ?? "") as string);
     const [username, setUsername] = useState<string>((cookiesGet(USERNAME_KEY) ?? "") as string);
     const [fullName, setFullName] = useState<string>((cookiesGet(FULL_NAME_KEY) ?? " ") as string);
+    const [hasToken, setHasToken] = useState<boolean>(false);
     const updateUserData = async (): Promise<void> => {
         await cacheUserDataClient();
         setUsername((cookiesGet(EMAIL_KEY) ?? "") as string);
         setFullName((cookiesGet(USERNAME_KEY) ?? "") as string);
         setEmail((cookiesGet(FULL_NAME_KEY) ?? " ") as string);
     };
+
+    useEffect(() => {
+        const run = async (): Promise<void> => {
+            setHasToken(await token());
+        };
+
+        run().then();
+    });
+
+    const forget = async (): Promise<void> => {
+        if (
+            !(await showConfirm({
+                title: "Oubli de l'appareil",
+                message: "Cette action vous déconnectera et effacera le jeton d'authentification associer à ce téléphone.",
+            }))
+        )
+            return;
+
+        if (!(await removeTokenServer(showToast))) return;
+        await setDefaultAccount("");
+        await removeToken();
+        await logout();
+    };
+
     const logout = async (): Promise<void> => {
+        if ((await getDefaultAccount()) === (await getUserName())) {
+            if (
+                !(await showConfirm({
+                    title: "Déconnexion",
+                    message: "Vous avez enregistré ce compte comme compte par défaut. Voulez-vous écraser ce choix en vous déconnectant ?",
+                }))
+            )
+                return;
+
+            await setDefaultAccount("");
+        }
+
         emitUserEvent("logout");
 
         showToast({
@@ -49,12 +94,20 @@ export default function MePageClient(): ReactElement {
     };
 
     const resetSchool = async (): Promise<void> => {
-        const result = await showConfirm({
-            title: "Réinitialisation",
-            message: "Voulez-vous vraiment réinitialiser l'application ?",
-        });
-        if (!result) return;
+        if (
+            !(await showConfirm({
+                title: "Réinitialisation",
+                message:
+                    "Voulez-vous vraiment réinitialiser l'application ? Cette action supprimera toutes les informations liées à cet appareil.",
+            }))
+        )
+            return;
 
+        if (!(await removeTokenServer(showToast))) return;
+        await setDefaultAccount("");
+        await removeToken();
+
+        // we do not use the logout user event because it automatically redirects to /user/login (see user-listener.ts)
         try {
             emptyUserCacheClient();
             const payload = { "csrf-token": await fetchCsrfClient("logout") };
@@ -129,6 +182,7 @@ export default function MePageClient(): ReactElement {
             )}
             <div className="h-px w-12/12 self-center bg-sky-300" />
             <Button key="logout-button" text="Se déconnecter" type="button" onClick={logout} color="red" />
+            {hasToken && <Button key="forget-button" text="Oublier cet appareil" type="button" onClick={forget} color="red" />}
             <Button key="reset-school-button" text="Réinitialiser l'Application" type="button" onClick={resetSchool} color="red" />
         </Card>
     );

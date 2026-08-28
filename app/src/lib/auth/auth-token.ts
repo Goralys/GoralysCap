@@ -1,6 +1,6 @@
 import { Device } from "@capacitor/device";
 import { SecureStorage, StorageError } from "@aparajita/capacitor-secure-storage";
-import { AUTH_TOKEN_KEY, AUTH_USERNAME_KEY } from "@/app/src/lib/config";
+import { AUTH_DEFAULT_ACCOUNT_KEY, AUTH_TOKEN_KEY, AUTH_USERNAME_KEY } from "@/app/src/lib/config";
 import {
     cacheUserDataClient,
     cookiesGet,
@@ -12,10 +12,43 @@ import {
     USERNAME_KEY,
 } from "@goralys/core";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
+import { Preferences } from "@capacitor/preferences";
 
-async function removeToken(): Promise<void> {
+export async function setDefaultAccount(username: string): Promise<void> {
+    await Preferences.set({ key: AUTH_DEFAULT_ACCOUNT_KEY, value: username });
+}
+
+export async function getDefaultAccount(): Promise<string | null> {
+    return (await Preferences.get({ key: AUTH_DEFAULT_ACCOUNT_KEY })).value;
+}
+
+export async function removeToken(): Promise<void> {
     await SecureStorage.remove(AUTH_TOKEN_KEY);
     await SecureStorage.remove(AUTH_USERNAME_KEY);
+}
+
+export async function removeTokenServer(showToast: ToastFn): Promise<boolean> {
+    const deviceName = (await Device.getInfo()).name;
+    if (!deviceName) {
+        throw new Error("No device name provided");
+    }
+
+    const res = await goralysFetchClient("DELETE", "user/token", {
+        "csrf-token": await fetchCsrfClient("revoke-auth-token"),
+        name: deviceName,
+    });
+    const data = await res.json();
+
+    if (!res.ok || !(data.success! as boolean)) {
+        showToast({
+            type: "error",
+            title: "Oubli de l'appareil",
+            message: "Nous n'avons pas pu supprimé votre jeton d'authentification.",
+        });
+        return false;
+    }
+
+    return true;
 }
 
 async function getToken(): Promise<string | null> {
@@ -93,7 +126,7 @@ export async function loginToken(showToast: ToastFn): Promise<void> {
         throw new Error("No device name provided");
     }
 
-    const username = await getUserName();
+    const username = (await getDefaultAccount()) ?? (await getUserName());
     const token = await getToken();
     if (!token) {
         throw new Error("No token provided");

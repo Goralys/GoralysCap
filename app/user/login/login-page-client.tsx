@@ -8,13 +8,13 @@ import { ReactElement, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
-import { getUserName, hasToken, loginToken } from "@/app/src/lib/auth/auth-token";
-import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
+import { getDefaultAccount, getUserName, hasToken, loginToken, setDefaultAccount } from "@/app/src/lib/auth/auth-token";
+import { useConfirmToken } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
 
 export default function LoginPageClient(): ReactElement {
     const searchParams = useSearchParams();
     const { showToast } = useToast();
-    const confirm = useConfirm();
+    const confirm = useConfirmToken();
     const router = useRouter();
 
     useEffect(() => {
@@ -50,17 +50,19 @@ export default function LoginPageClient(): ReactElement {
         try {
             (async (): Promise<void> => {
                 if (await hasToken()) {
-                    if (
-                        !(await confirm.showConfirm({
-                            title: "Connexion",
-                            message: "Voulez-vous vous connectez à l'aide du compte sauvegarder (" + (await getUserName()) + ") ?",
-                        }))
-                    ) {
-                        return;
-                    }
-                }
+                    if (!((await getDefaultAccount()) === (await getUserName()))) {
+                        const result = await confirm.showConfirmToken((await getUserName())!);
+                        if (!result.confirm) {
+                            return;
+                        }
 
-                await loginToken(showToast);
+                        if (!result.askAgain) {
+                            await setDefaultAccount((await getUserName())!);
+                        }
+                    }
+
+                    await loginToken(showToast);
+                }
             })();
         } catch (e) {
             console.error(e);

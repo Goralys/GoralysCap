@@ -4,3 +4,5 @@ export const HIGH_SCHOOLS_SYNC = "high-schools-sync";
 export const SCHOOL_TOKEN_KEY = "school-token";
 export const AUTH_TOKEN_KEY = "goralys-auth-token";
 export const AUTH_USERNAME_KEY = "goralys-auth-token-username";
+
+export const AUTH_DEFAULT_ACCOUNT_KEY = "goralys-auth-default-account";
