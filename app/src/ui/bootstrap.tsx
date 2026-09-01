@@ -3,8 +3,11 @@
 import { configGoralysCore, CookiesAdapter, cookiesGet, USERNAME_KEY } from "@goralys/core";
 import Cookies from "universal-cookie";
 import { getSchoolToken } from "@/app/src/lib/auth/school-token";
+import { useToast } from "@/app/src/ui/toast/toast-provider";
 
 export default function Bootstrap(): null {
+    const { showToast } = useToast();
+
     configGoralysCore({
         client: {
             apiDomain: process.env.NEXT_PUBLIC_API_DOMAIN ?? "",
@@ -14,6 +17,14 @@ export default function Bootstrap(): null {
         storage: {
             getItem: (key) => localStorage.getItem(key),
             getSize: () => localStorage.length,
+            keys: () => {
+                const localKeys: string[] = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k !== null) localKeys.push(k);
+                }
+                return localKeys;
+            },
             keyAt: (idx) => localStorage.key(idx) ?? undefined,
             setItem: (key, value) => localStorage.setItem(key, value),
             removeItem: (key) => localStorage.removeItem(key),
@@ -32,6 +43,9 @@ export default function Bootstrap(): null {
             };
         })(),
         auth: () => !!cookiesGet(USERNAME_KEY),
+        toast: {
+            getShowToast: () => showToast,
+        },
     });
 
     return null;

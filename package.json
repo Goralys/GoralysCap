@@ -9,18 +9,15 @@
         "lint": "eslint app",
         "assets:generate": "capacitor-assets generate && node scripts/patch-monochrome-icon.cjs"
     },
-    "pnpm": {
-        "overrides": {
-            "sharp": "0.35.3"
-        }
-    },
     "dependencies": {
+        "@aparajita/capacitor-secure-storage": "^8.0.0",
         "@capacitor/android": "^8.4.2",
         "@capacitor/assets": "^3.0.5",
         "@capacitor/core": "^8.4.2",
+        "@capacitor/device": "^8.0.3",
         "@capacitor/ios": "^8.4.2",
         "@capacitor/preferences": "^8.0.1",
-        "@goralys/core": "^1.4.3",
+        "@goralys/core": "^1.6.4",
         "@heroicons/react": "^2.2.0",
         "@sidekickicons/react": "^0.15.0",
         "clsx": "^2.1.1",
@@ -43,5 +40,6 @@
         "sharp": "^0.35.3",
         "tailwindcss": "^4",
         "typescript": "^6"
-    }
+    },
+    "packageManager": "pnpm@11.23.0+sha512.f00082e5b283a199b74e079da28d155c008fe232f44c8a06ea7ddfa014ecf719fc362f790ecc67b28106ddac2afb24c49a9a079159da560b2ce7d1e98efd11af"
 }

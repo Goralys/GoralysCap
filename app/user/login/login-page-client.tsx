@@ -8,10 +8,13 @@ import { ReactElement, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
+import { getDefaultAccount, getUserName, hasToken, loginToken, setDefaultAccount } from "@/app/src/lib/auth/auth-token";
+import { useConfirmToken } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
 
 export default function LoginPageClient(): ReactElement {
     const searchParams = useSearchParams();
     const { showToast } = useToast();
+    const confirm = useConfirmToken();
     const router = useRouter();
 
     useEffect(() => {
@@ -41,7 +44,30 @@ export default function LoginPageClient(): ReactElement {
         }
 
         navigateTo("/user/login");
-    }, [searchParams, router, showToast]); // The toast dependency is ignored to avoid render loop.
+    }, [searchParams, router, showToast]);
+
+    useEffect(() => {
+        try {
+            (async (): Promise<void> => {
+                if (await hasToken()) {
+                    if (!((await getDefaultAccount()) === (await getUserName()))) {
+                        const result = await confirm.showConfirmToken((await getUserName())!);
+                        if (!result.confirm) {
+                            return;
+                        }
+
+                        if (!result.askAgain) {
+                            await setDefaultAccount((await getUserName())!);
+                        }
+                    }
+
+                    await loginToken(showToast);
+                }
+            })();
+        } catch (e) {
+            console.error(e);
+        }
+    }, [confirm, showToast]);
 
     return (
         <div className="flex grow content-center justify-center items-center min-h-screen">

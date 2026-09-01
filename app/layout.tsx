@@ -25,9 +25,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </head>
 
             <body className={`${Lusitania.className} antialiased text-gray-900 bg-gray-50 overflow-auto`}>
-                <Bootstrap />
-                <RouteGuards />
                 <Providers>
+                    <RouteGuards />
+                    <Bootstrap />
+
                     <AuthListener />
                     <UserListener />
                     <NavigationListener />

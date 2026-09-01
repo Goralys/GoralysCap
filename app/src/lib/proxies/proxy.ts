@@ -8,10 +8,11 @@ import { usePathname } from "next/navigation";
 import { useSubjectsGuard } from "@/app/src/lib/proxies/guard/subjects-guard";
 import { useAdminsGuard } from "@/app/src/lib/proxies/guard/admins-guard";
 import { useFoolsGuard } from "@/app/src/lib/proxies/guard/fools-guard";
+import { useSchoolGuard } from "@/app/src/lib/proxies/guard/school-guard";
 
 const routes: Array<{
     matcher: RegExp;
-    guard: "subjects" | "admins" | "fools";
+    guard: "subjects" | "admins" | "fools" | "school";
 }> = [
     { matcher: /^\/subject/, guard: "subjects" },
     { matcher: /^\/admin/, guard: "admins" },
@@ -32,6 +33,9 @@ export function RouteGuards(): null {
     useSubjectsGuard({ enabled: activeGuard === "subjects", pathname });
     useAdminsGuard({ enabled: activeGuard === "admins", pathname });
     useFoolsGuard({ enabled: activeGuard === "fools", pathname });
+
+    const isHome = pathname === "/";
+    useSchoolGuard({ enabled: !isHome, pathname });
 
     return null;
 }

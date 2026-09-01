@@ -6,10 +6,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserRole } from "@goralys/core";
+import { goralysFetchClient, UserRole } from "@goralys/core";
 import { GuardOptions } from "@/app/src/lib/types";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
-import { getSchoolToken } from "@/app/src/lib/auth/school-token";
 
 interface RoleGuardOptions extends GuardOptions {
     allowedRoles: UserRole["role"][];
@@ -54,12 +53,8 @@ export function useRoleGuard({ enabled, allowedRoles, onSuccess }: RoleGuardOpti
 
             let res: Response;
             try {
-                res = await fetch(`${apiUrl}/user/role`, {
-                    method: "GET",
-                    credentials: "include",
+                res = await goralysFetchClient("GET", "user/role", undefined, {
                     headers: {
-                        "X-High-School-Token": getSchoolToken(),
-                        "X-Goralys-Client": "mobile",
                         "Cache-Control": "no-cache, no-store, must-revalidate",
                         Pragma: "no-cache",
                         Expires: "0",
