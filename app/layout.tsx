@@ -9,7 +9,6 @@ import { UserListener } from "@/app/src/lib/auth/user-listerner";
 import { NavigationListener } from "@/app/src/lib/navigation/navigation-listener";
 import { RouteGuards } from "@/app/src/lib/proxies/proxy";
 import UIBootstrap from "@/app/src/lib/ui-bootstrap";
-import { ConfirmTokenProvider } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
 
 export const metadata: Metadata = {
     title: "Goralys",
@@ -26,25 +25,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <body className={`${Lusitania.className} antialiased text-gray-900 bg-gray-50 overflow-auto`}>
                 <UIBootstrap>
                     <Providers>
-                        <div id="confirm-token-root"></div>
-                        <ConfirmTokenProvider>
-                            <RouteGuards />
-                            <Bootstrap />
+                        <RouteGuards />
+                        <Bootstrap />
 
-                            <AuthListener />
-                            <UserListener />
-                            <NavigationListener />
-                            <Suspense fallback={null}>
-                                <FlashToastListener />
-                            </Suspense>
-                            <div className="flex flex-col-reverse sm:flex-row min-h-screen">
-                                <TapBar />
-                                <main className="flex pb-12 sm:pb-0 sm:ml-55 w-full">
-                                    {children}
-                                    <CookieBanner />
-                                </main>
-                            </div>
-                        </ConfirmTokenProvider>
+                        <AuthListener />
+                        <UserListener />
+                        <NavigationListener />
+                        <Suspense fallback={null}>
+                            <FlashToastListener />
+                        </Suspense>
+                        <div className="flex flex-col-reverse sm:flex-row min-h-screen">
+                            <TapBar />
+                            <main className="flex pb-12 sm:pb-0 sm:ml-55 w-full">
+                                {children}
+                                <CookieBanner />
+                            </main>
+                        </div>
                     </Providers>
                 </UIBootstrap>
             </body>

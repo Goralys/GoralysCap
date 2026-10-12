@@ -33,8 +33,8 @@ importers:
         specifier: ^1.6.6
         version: 1.6.6(react@19.2.4)
       '@goralys/ui':
-        specifier: ^0.1.3
-        version: 0.1.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^0.2.0
+        version: 0.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.4)
@@ -281,8 +281,8 @@ packages:
     peerDependencies:
       react: '>=18'
 
-  '@goralys/ui@0.1.3':
-    resolution: {integrity: sha512-Wo+rZ67AXoIB4PTiH2z7AMKj+iEcm0lENh+DdcHfQBSp7LYv+6UkzxL1ZsLvi8+YXUUdzEAhvHz4zx8zAb56YA==}
+  '@goralys/ui@0.2.0':
+    resolution: {integrity: sha512-C+v8gj66NXAiEVtx1q9ArXp35TFWIXJ87Gs83/cht15xvho7XU2KYT06H3bXfFJdusKEk/+c3xoajxhRCTbU6A==}
     peerDependencies:
       react: '>=19'
       react-dom: '>=19'
@@ -3772,7 +3772,7 @@ snapshots:
     dependencies:
       react: 19.2.4
 
-  '@goralys/ui@0.1.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@goralys/ui@0.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@goralys/core': 1.6.6(react@19.2.4)
       '@heroicons/react': 2.2.0(react@19.2.4)

@@ -14,7 +14,7 @@ import {
     handleToastRequest,
     USERNAME_KEY,
 } from "@goralys/core";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useLayoutEffect, useState } from "react";
 import { Preferences } from "@capacitor/preferences";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
@@ -32,6 +32,7 @@ export default function MePageClient(): ReactElement {
     const { showEmailModal } = useEmailModal();
     const { showConfirm } = useConfirm();
 
+    const [allowLogout, setAllowLogout] = useState<boolean>(false);
     const [email, setEmail] = useState<string>((cookiesGet(EMAIL_KEY) ?? "") as string);
     const [username, setUsername] = useState<string>((cookiesGet(USERNAME_KEY) ?? "") as string);
     const [fullName, setFullName] = useState<string>((cookiesGet(FULL_NAME_KEY) ?? " ") as string);
@@ -50,6 +51,15 @@ export default function MePageClient(): ReactElement {
 
         run().then();
     });
+
+    // use a layout effect to avoid logout button being disabled and then enabled (see usage bellow)
+    useLayoutEffect(() => {
+        const run = async (): Promise<void> => {
+            setAllowLogout((await getDefaultAccount()) !== (await getUserName()));
+        };
+
+        run().then();
+    }, []);
 
     const forget = async (): Promise<void> => {
         if (
@@ -176,7 +186,7 @@ export default function MePageClient(): ReactElement {
                 />
             )}
             <div className="h-px w-12/12 self-center bg-sky-300" />
-            <Button key="logout-button" text="Se déconnecter" type="button" onClick={logout} color="red" />
+            <Button key="logout-button" text="Se déconnecter" type="button" onClick={logout} color="red" disabled={!allowLogout} />
             {hasToken && <Button key="forget-button" text="Oublier cet appareil" type="button" onClick={forget} color="red" />}
             <Button key="reset-school-button" text="Réinitialiser l'Application" type="button" onClick={resetSchool} color="red" />
         </Card>

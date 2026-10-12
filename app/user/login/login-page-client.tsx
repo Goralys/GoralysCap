@@ -1,7 +1,6 @@
 "use client";
 
-import { useConfirmToken } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
-import { Card, LoginForm, useGoralysUI, useToast } from "@goralys/ui";
+import { Card, LoginForm, useConfirmToken, useGoralysUI, useToast } from "@goralys/ui";
 import { ReactElement, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
