@@ -3,14 +3,13 @@ import "./globals.css";
 import { Lusitania } from "@/app/src/lib/fonts";
 import React, { ReactElement, Suspense } from "react";
 import { AuthListener } from "@/app/src/lib/auth/auth-listener";
-import FlashToastListener from "@/app/src/ui/toast/flash-toast-listener";
+import { CookieBanner, FlashToastListener, Providers, TapBar } from "@goralys/ui";
+import Bootstrap from "@/app/src/lib/bootstrap";
 import { UserListener } from "@/app/src/lib/auth/user-listerner";
-import { Providers } from "@/app/src/ui/modals/providers";
-import CookieBanner from "@/app/src/ui/basic/cookies-banner";
 import { NavigationListener } from "@/app/src/lib/navigation/navigation-listener";
-import Bootstrap from "@/app/src/ui/bootstrap";
 import { RouteGuards } from "@/app/src/lib/proxies/proxy";
-import TapBar from "@/app/src/ui/nav/tap-bar";
+import UIBootstrap from "@/app/src/lib/ui-bootstrap";
+import { ConfirmTokenProvider } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
 
 export const metadata: Metadata = {
     title: "Goralys",
@@ -25,24 +24,29 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </head>
 
             <body className={`${Lusitania.className} antialiased text-gray-900 bg-gray-50 overflow-auto`}>
-                <Providers>
-                    <RouteGuards />
-                    <Bootstrap />
+                <UIBootstrap>
+                    <Providers>
+                        <div id="confirm-token-root"></div>
+                        <ConfirmTokenProvider>
+                            <RouteGuards />
+                            <Bootstrap />
 
-                    <AuthListener />
-                    <UserListener />
-                    <NavigationListener />
-                    <Suspense fallback={null}>
-                        <FlashToastListener />
-                    </Suspense>
-                    <div className="flex flex-col-reverse sm:flex-row min-h-screen">
-                        <TapBar />
-                        <main className="flex pb-12 sm:pb-0 sm:ml-55 w-full">
-                            {children}
-                            <CookieBanner />
-                        </main>
-                    </div>
-                </Providers>
+                            <AuthListener />
+                            <UserListener />
+                            <NavigationListener />
+                            <Suspense fallback={null}>
+                                <FlashToastListener />
+                            </Suspense>
+                            <div className="flex flex-col-reverse sm:flex-row min-h-screen">
+                                <TapBar />
+                                <main className="flex pb-12 sm:pb-0 sm:ml-55 w-full">
+                                    {children}
+                                    <CookieBanner />
+                                </main>
+                            </div>
+                        </ConfirmTokenProvider>
+                    </Providers>
+                </UIBootstrap>
             </body>
         </html>
     );

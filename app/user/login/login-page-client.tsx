@@ -1,24 +1,24 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Card } from "@/app/src/ui/card";
-import LoginForm from "@/app/src/ui/user/forms/login-form";
-import { ReactElement, useEffect } from "react";
+import { useConfirmToken } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
+import { Card, LoginForm, useGoralysUI, useToast } from "@goralys/ui";
+import { ReactElement, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { getDefaultAccount, getUserName, hasToken, loginToken, setDefaultAccount } from "@/app/src/lib/auth/auth-token";
-import { useConfirmToken } from "@/app/src/ui/modals/auth-token/confirm-token-provider";
 
 export default function LoginPageClient(): ReactElement {
+    const Link = useGoralysUI().Link;
+    const Image = useGoralysUI().Image;
+
     const searchParams = useSearchParams();
     const { showToast } = useToast();
     const confirm = useConfirmToken();
     const router = useRouter();
+    const reason = searchParams.get("reason");
+    const attemptedLogin = useRef(false);
 
     useEffect(() => {
-        const reason = searchParams.get("reason");
         console.log(reason);
         if (!reason) return;
 
@@ -40,13 +40,15 @@ export default function LoginPageClient(): ReactElement {
                 title: "Permission",
                 message: "Vous n'avez pas les permissions nécessaires sur ce compte",
             });
-            return;
         }
 
         navigateTo("/user/login");
-    }, [searchParams, router, showToast]);
+    }, [reason, router, showToast]);
 
     useEffect(() => {
+        if (attemptedLogin.current) return;
+        attemptedLogin.current = true;
+
         try {
             (async (): Promise<void> => {
                 if (await hasToken()) {

@@ -8,9 +8,8 @@
 import { useEffect } from "react";
 import { emptyUserCacheClient, fetchCsrfClient, goralysFetchClient, onUserEvent } from "@goralys/core";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
-import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
+import { useConfirm, useToast } from "@goralys/ui";
 import { createAuthToken, hasToken } from "@/app/src/lib/auth/auth-token";
-import { useToast } from "@/app/src/ui/toast/toast-provider";
 
 export function UserListener(): null {
     const confirm = useConfirm();

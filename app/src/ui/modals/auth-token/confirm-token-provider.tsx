@@ -72,7 +72,7 @@ export function ConfirmTokenProvider({ children }: { children: ReactNode }): Rea
 export function useConfirmToken(): ConfirmTokenContext {
     const context = useContext(ConfirmTokenContext);
     if (!context) {
-        throw new Error("useConfirm must be used within a ConfirmProvider");
+        throw new Error("useConfirmToken must be used within a ConfirmProvider");
     }
     return context;
 }

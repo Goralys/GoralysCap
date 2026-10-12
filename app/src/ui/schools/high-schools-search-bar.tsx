@@ -1,5 +1,5 @@
-import React, { ReactElement, SubmitEvent, useEffect, useState } from "react";
-import { FloatingInput } from "@/app/src/ui/inputs/floating-input";
+import React, { ReactElement, SyntheticEvent, useEffect, useState } from "react";
+import { FloatingInput } from "@goralys/ui";
 import { HighSchool } from "@/app/src/lib/types";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
@@ -11,7 +11,7 @@ interface HighSchoolsSearchBarProps {
 export default function HighSchoolsSearchBar({ highSchools, setCurrentHighSchools }: HighSchoolsSearchBarProps): ReactElement {
     const [searchText, setSearchText] = useState("");
 
-    const handleSearch = (e: SubmitEvent<HTMLInputElement>): void => {
+    const handleSearch = (e: SyntheticEvent<HTMLInputElement, InputEvent>): void => {
         const value = e.currentTarget.value;
         setSearchText(value);
     };

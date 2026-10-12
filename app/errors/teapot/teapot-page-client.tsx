@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import GoralysLogoLoader from "@/app/src/ui/basic/goralys-logo-loader";
+import { GoralysLogoLoader, useToast } from "@goralys/ui";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { ReactElement, useEffect } from "react";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 

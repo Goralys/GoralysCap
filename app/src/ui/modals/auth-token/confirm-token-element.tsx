@@ -1,11 +1,10 @@
 "use client";
 
 import { clsx } from "clsx";
-import { Button } from "@/app/src/ui/button";
+import { Button, Checkbox } from "@goralys/ui";
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { useModalClose } from "@/app/src/lib/modals";
 import { ReactElement, useRef, useState } from "react";
-import Checkbox from "@/app/src/ui/inputs/checkbox";
 
 interface Props {
     savedUsername: string;

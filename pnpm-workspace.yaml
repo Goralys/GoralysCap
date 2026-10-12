@@ -2,4 +2,5 @@ allowBuilds:
   sharp: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
-  - '@goralys/core@1.6.1 || 1.6.2 || 1.6.4'
+  - '@goralys/core@1.6.1 || 1.6.2 || 1.6.4 || 1.6.6'
+  - '@goralys/ui@0.1.3'

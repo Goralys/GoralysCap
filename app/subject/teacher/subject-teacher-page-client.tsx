@@ -1,10 +1,8 @@
 "use client";
 
-import TeacherCard from "@/app/src/ui/subjects/teacher-card";
-import { SubjectsSearchBar } from "@/app/src/ui/subjects/subjects-search-bar";
+import { SubjectsSearchBar, TeacherCard, TeacherCardSkeleton } from "@goralys/ui";
 import { ReactElement, Suspense, useState } from "react";
 import { cookiesSet, Subject, useSubjects } from "@goralys/core";
-import TeacherCardSkeleton from "@/app/src/ui/skeletons/subjects/teacher-card";
 
 export default function SubjectTeacherPageClient(): ReactElement {
     const { subjects, refetch, syncKey } = useSubjects("teacher");

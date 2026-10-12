@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import Image from "next/image";
-import { Card } from "@/app/src/ui/card";
-import RegisterForm from "@/app/src/ui/user/forms/register-form";
+import { Card, RegisterForm, useGoralysUI } from "@goralys/ui";
 import { ReactElement } from "react";
 
 export default function RegisterPageClient(): ReactElement {
+    const Link = useGoralysUI().Link;
+    const Image = useGoralysUI().Image;
+
     return (
         <div className="flex grow content-center justify-center items-center min-h-screen">
             <div className="grid sm:w-5xl sm:ml-auto ml-2 sm:mr-auto mr-2 w-full gap-1 sm:grid-cols-2 grid-rows-2">

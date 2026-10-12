@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/app/src/ui/button";
+import { Button, Card, FloatingInput, useConfirm, useEmailModal, useToast } from "@goralys/ui";
 import {
     buildApiUrl,
     cacheUserDataClient,
@@ -14,13 +14,8 @@ import {
     handleToastRequest,
     USERNAME_KEY,
 } from "@goralys/core";
-import { useToast } from "@/app/src/ui/toast/toast-provider";
-import { Card } from "@/app/src/ui/card";
-import { FloatingInput } from "@/app/src/ui/inputs/floating-input";
 import { ReactElement, useEffect, useState } from "react";
-import { useEmailModal } from "@/app/src/ui/modals/email/email-modal-provider";
 import { Preferences } from "@capacitor/preferences";
-import { useConfirm } from "@/app/src/ui/modals/confirm/confirm-provider";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
 import {

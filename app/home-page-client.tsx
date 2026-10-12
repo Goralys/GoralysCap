@@ -1,13 +1,13 @@
 "use client";
 
 import HighSchoolsList from "@/app/src/ui/schools/high-schools-list";
+import { useToast } from "@goralys/ui";
 import { ReactElement, useCallback, useEffect } from "react";
 import { Preferences } from "@capacitor/preferences";
 import { setSchoolToken } from "@/app/src/lib/auth/school-token";
 import { navigateTo } from "@/app/src/lib/navigation/navigation-listener";
 import { cookiesGet, ROLE_KEY, USER_ROLES, UserRole } from "@goralys/core";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useToast } from "@/app/src/ui/toast/toast-provider";
 import { SCHOOL_TOKEN_KEY } from "@/app/src/lib/config";
 
 export default function HomePageClient(): ReactElement {

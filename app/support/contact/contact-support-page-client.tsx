@@ -1,12 +1,12 @@
 "use client";
 
 import { ReactElement } from "react";
-import { Card } from "@/app/src/ui/card";
-import Image from "next/image";
-import Link from "next/link";
-import SupportForm from "@/app/src/ui/support/support-form";
+import { Card, SupportForm, useGoralysUI } from "@goralys/ui";
 
 export default function ContactSupportPageClient(): ReactElement {
+    const Link = useGoralysUI().Link;
+    const Image = useGoralysUI().Image;
+
     return (
         <div className="flex grow content-center justify-center items-center h-fit sm:p-10 p-0 min-h-screen">
             <div className="grid sm:w-5xl sm:ml-auto ml-2 sm:mr-auto mr-2 w-full gap-1 sm:grid-rows-1 sm:grid-cols-2 grid-rows-2 h-fit">

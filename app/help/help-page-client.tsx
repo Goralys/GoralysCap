@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, ReactElement } from "react";
+import { ReactElement, useState } from "react";
 import { clsx } from "clsx";
 import { ChevronRightIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { helpContent } from "@goralys/core";
-import Link from "next/link";
+import { useGoralysUI } from "@goralys/ui";
 
 export default function HelpPage(): ReactElement {
+    const Link = useGoralysUI().Link;
+
     const [activeSection, setActiveSection] = useState<string>("getting-started");
     const [expandedSubsection, setExpandedSubsection] = useState<string | null>(null);
 
